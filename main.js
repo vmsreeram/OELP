@@ -1,5 +1,5 @@
-console.log('main process started');
-console.log('log from main.js');
+// console.log('main process started');
+// console.log('log from main.js');
 
 const {
     app,
@@ -9,6 +9,7 @@ const {
 const { platform } = require("os");
 const path = require("path");
 const url = require("url");
+const {PythonShell} = require("python-shell")
 
 let win;
 function createWindow() {
@@ -26,7 +27,13 @@ function createWindow() {
         protocol: 'file',
         slashes:true
     }));
-    win.webContents.openDevTools();
+    // var pyoptions = {
+    //     scriptPath : path.join(__dirname, '.'i)
+    // }
+    
+      
+
+    // win.webContents.openDevTools();
     win.on('closed', () => {
         win = null;
     })
@@ -48,3 +55,12 @@ app.on('activate', () => {
 ipcMain.on('close', () => {
     app.quit()
 });
+
+ipcMain.on('ready-diag', (event, arg) => {
+    PythonShell.run('diagonostics.py', null, function (err, results) {
+        if (err) throw err;
+        console.log('Python script executed successfully!');
+        event.sender.send('fn-called');
+      });
+});
+  

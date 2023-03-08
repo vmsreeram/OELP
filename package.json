@@ -18,8 +18,9 @@
     "start": "electron ."
   },
   "dependencies": {
-    "python-shell": "^1.0.4"
-},
+    "python-shell": "^1.0.4",
+    "xhr2": "^0.2.1"
+  },
   "devDependencies": {
     "electron": "^23.0.0"
   }

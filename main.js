@@ -9,7 +9,6 @@ const {
 const { platform } = require("os");
 const path = require("path");
 const url = require("url");
-const {PythonShell} = require("python-shell")
 
 let win;
 function createWindow() {

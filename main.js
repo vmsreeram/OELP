@@ -57,10 +57,18 @@ ipcMain.on('close', () => {
 });
 
 ipcMain.on('ready-diag', (event, arg) => {
-    PythonShell.run('diagonostics.py', null, function (err, results) {
-        if (err) throw err;
-        console.log('Python script executed successfully!');
+    var XMLHttpRequest = require('xhr2');
+let request = new XMLHttpRequest();
+request.open("GET","http://127.0.0.1:9999")
+request.send()
+request.onload = () => {
+    if(request.status === 200){
+        console.log("successful");
         event.sender.send('fn-called');
-      });
+    }
+    else{
+        console.log("failed")
+    }
+};
 });
   

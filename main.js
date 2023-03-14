@@ -10,6 +10,23 @@ const { platform } = require("os");
 const path = require("path");
 const url = require("url");
 
+// const { MongoClient } = require("mongodb");
+// const uri = "mongodb://0.0.0.0:27017/";
+// const client = new MongoClient(uri);
+// async function run() {
+//     try {
+//         await client.connect();
+//         // database and collection code goes here
+//         // insert code goes here
+//         // display the results of your operation
+//         console.log("mongo connected!");
+//     } finally {
+//         // Ensures that the client will close when you finish/error
+//         await client.close();
+//     }
+// }
+// run().catch(console.dir);
+
 let win;
 function createWindow() {
     win= new BrowserWindow({
@@ -53,6 +70,38 @@ app.on('activate', () => {
 // main.js handles command sent through ipc, and quits the app.
 ipcMain.on('close', () => {
     app.quit()
+});
+
+let win1;
+ipcMain.on('loggedin', () => {
+    // app.quit()
+    win.close();
+    win1= new BrowserWindow({
+        frame: false,
+        // fullscreen: true,
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: true,
+        },
+      });
+    win1.loadURL(url.format({
+        pathname: path.join(__dirname, 'afterlogin.html'),
+        protocol: 'file',
+        slashes:true
+    }));
+    // var pyoptions = {
+    //     scriptPath : path.join(__dirname, '.'i)
+    // }
+    
+      
+
+    // win1.webContents.openDevTools();
+    win1.on('closed', () => {
+        win1 = null;
+    })
+
+
 });
 
 ipcMain.on('ready-diag', (event, arg) => {

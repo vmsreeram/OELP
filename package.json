@@ -12,12 +12,12 @@
   "main": "./main.js",
   "repository": "https://github.com/vmsreeram/electron-quick-start",
   "version": "1.0.0",
-  
   "author": "ajaikumarmp",
   "scripts": {
     "start": "electron ."
   },
   "dependencies": {
+    "mongodb": "^5.1.0",
     "xhr2": "^0.2.1"
   },
   "devDependencies": {

@@ -35,9 +35,9 @@
     <br>
     <div class="loader" id="loader"></div>
     <br>
-    <img src="errimg.jpeg" alt="">
+    <img id="errimg" src="errimg.jpeg" alt="">
     <h1 id="hellotitle" hidden>Hello</h1>
-    <form action="login.php" id="loginboxes">
+    <div id="loginboxes">
         <table>
             <tr>
                 <td>Username:</td> 
@@ -48,9 +48,9 @@
                 <td><input type="password" name="password" id="pwd" placeholder="password"></td>
             </tr>
             <tr>
-                <td colspan="2"><input type="button" value="Submit"></td>
+                <td colspan="2"><input type="button" value="Submit" onclick="subCreds()"></td>
             </tr>
         </table>
-    </form>
+    </div>  
 </body>
 </html>

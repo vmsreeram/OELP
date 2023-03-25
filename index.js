@@ -24,6 +24,49 @@ const client = new MongoClient(uri);
 // }
 // run().catch(console.dir);
 
+////////////////
+document.addEventListener("DOMContentLoaded", function(event) {
+    const logTextArea = document.getElementById('log');
+  
+    function appendToLog(text) {
+      logTextArea.value += text + '\n';
+    }
+
+    const http = require('http');
+    const options = {
+    host: '127.0.0.1',
+    port: 9999,
+    path: '/'
+    };
+    const request = http.request(options, (response) => {
+        appendToLog(`HTTP Server up and running.`);
+        console.log(`HTTP Server status code: ${response.statusCode}`);
+    });
+    request.on('error', (error) => {
+        appendToLog(`HTTP Server is not running.`);
+        console.log(`HTTP Server error: ${error.message}`);
+    });
+    request.end();
+
+    const options1 = {
+        host: '0.0.0.0',
+        port: 27017,
+        path: '/'
+    };
+    const request1 = http.request(options1, (response) => {
+        appendToLog(`MongoDB Server up and running.`);
+        console.log(`MongoDB Server status code: ${response.statusCode}`);
+    });
+    request1.on('error', (error) => {
+        appendToLog(`MongoDB Server is not running.`);
+        console.log(`MongoDB Server error: ${error.message}`);
+    });
+    request1.end();
+
+});
+/////////////
+
+
 function closeFn1() {
     // console.log('Clicked1');
     ipcRenderer.send('close')
@@ -78,7 +121,7 @@ function stopLoader() {
     var body = document.querySelector("body");
     var loginboxes = document.getElementById("loginboxes");
     var lblDiag = document.getElementById("lblDiag")
-    var errimg = document.getElementById("errimg")
+    var log = document.getElementById("log")
     
     loader.style.animation = "none";
     loader.style.animation = "none";
@@ -87,7 +130,7 @@ function stopLoader() {
     body.style.backgroundColor = "white";
     loginboxes.style.display = "block";
     lblDiag.style.display = "none";
-    errimg.style.display = "none"
+    log.style.display = "none"
 
     // ---- no longer used ----
     // setTimeout(function() {

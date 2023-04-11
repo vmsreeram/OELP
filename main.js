@@ -1,54 +1,51 @@
-// console.log('main process started');
-// console.log('log from main.js');
-
 const {
     app,
     BrowserWindow,
-    ipcMain
+    ipcMain,
+    dialog
 } = require("electron");
 const { platform } = require("os");
 const path = require("path");
 const url = require("url");
 
-// const { MongoClient } = require("mongodb");
-// const uri = "mongodb://0.0.0.0:27017/";
-// const client = new MongoClient(uri);
-// async function run() {
-//     try {
-//         await client.connect();
-//         // database and collection code goes here
-//         // insert code goes here
-//         // display the results of your operation
-//         console.log("mongo connected!");
-//     } finally {
-//         // Ensures that the client will close when you finish/error
-//         await client.close();
-//     }
-// }
-// run().catch(console.dir);
+const wifi = require('wifi-control');
+wifi.init();
 
+ipcMain.handle('show-message-box', (event, options) => {
+    const result = dialog.showMessageBoxSync({
+      ...options,
+      message: `${options.message}`,
+      noLink: true,
+      cancelId: 1,
+      customInputs: [
+        { label: options.inputFieldLabel, type: 'password' },
+      ],
+    });
+  
+    return Promise.resolve(result);
+  });
+
+// function to create window when the app is ready/activated.
 let win;
 function createWindow() {
     win= new BrowserWindow({
         frame: false,
-        // fullscreen: true,
+        // fullscreen: true,            // To be uncommented before final testing/depolyment
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false,
           enableRemoteModule: true,
         },
       });
+
+    // index.html is loaded as the first window on startup
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file',
         slashes:true
     }));
-    // var pyoptions = {
-    //     scriptPath : path.join(__dirname, '.'i)
-    // }
-    
-      
 
+    // Used for debugging
     win.webContents.openDevTools();
     win.on('closed', () => {
         win = null;
@@ -72,13 +69,13 @@ ipcMain.on('close', () => {
     app.quit()
 });
 
+// function to create window that is displayed when login is successful
 let win1;
 ipcMain.on('loggedin', () => {
-    // app.quit()
-    win.close();
+    win.close();                // to close the previous window
     win1= new BrowserWindow({
         frame: false,
-        // fullscreen: true,
+        // fullscreen: true,            // To be uncommented before final testing/depolyment
         webPreferences: {
           nodeIntegration: true,
           contextIsolation: false,
@@ -90,13 +87,10 @@ ipcMain.on('loggedin', () => {
         protocol: 'file',
         slashes:true
     }));
-    // var pyoptions = {
-    //     scriptPath : path.join(__dirname, '.'i)
-    // }
     
-      
+    // Used for debugging
+    win1.webContents.openDevTools();
 
-    // win1.webContents.openDevTools();
     win1.on('closed', () => {
         win1 = null;
     })
@@ -104,12 +98,14 @@ ipcMain.on('loggedin', () => {
 
 });
 
+// once index is ready, index.js calles ready-diag through ipc. Now main.js will httprequest the python server
 ipcMain.on('ready-diag', (event, arg) => {
     var XMLHttpRequest = require('xhr2');
 let request = new XMLHttpRequest();
 request.open("GET","http://127.0.0.1:9999")
 request.send()
 request.onload = () => {
+    // if request successful,
     if(request.status === 200){
         console.log("successful");
         event.sender.send('fn-called');

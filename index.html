@@ -32,6 +32,16 @@
     <input type="button" value="Close" id="closeBtn1" onclick="closeFn1()"><label id="lblDiag" style="display: block;">Diagonostic tests running...</label>
     <br>
     <br>
+    <!-- <input type="button" value="ConnectWiFi" id="wificnctbtn" src="wifiLogin.html"> -->
+    <button id="wificnctbtn" class="float-left submit-button" >ConnectWiFi</button>
+
+    <script type="text/javascript">
+        document.getElementById("wificnctbtn").onclick = function () {
+            location.href = "wifiLogin.html";
+        };
+    </script>
+
+    <br>
     <br>
     <div class="loader" id="loader"></div>
     <br>

@@ -1,22 +1,20 @@
+// interprocess communication is done using ipcRenderer. 
 const { ipcRenderer } = require('electron');
 
+// closing the window ~ used only in dev phase
 function closeFn1() {
-    // console.log('Clicked1');
     ipcRenderer.send('close')
 }
 
 function testSetFn1() {
-    // pyhton server to be imp...
     alert("Alert: To be implemented");
     // ipcRenderer.send('close')
 }
 function testSetFn2() {
-    // pyhton server to be imp...
     alert("Alert: To be implemented");
     // ipcRenderer.send('close')
 }
 function testSetFn3() {
-    // pyhton server to be imp...
     alert("Alert: To be implemented");
     // ipcRenderer.send('close')
 }

@@ -1,29 +1,16 @@
-// console.log('log from index.js');
-
 const { ipcRenderer } = require('electron');
-
+// interprocess communication is done ipcrenderer
 ipcRenderer.on('fn-called', () => {
+    // when main.js sees that diagonostics.py (in http server) has returned, it calles fn-called on ipc channel
     stopLoader();
 });
 
-
+// setting up mongoclient which is used to comm with mongodb server
 const { MongoClient } = require("mongodb");
 const uri = "mongodb://0.0.0.0:27017/";
 const client = new MongoClient(uri);
-// async function run() {
-//     try {
-//         await client.connect();
-//         // database and collection code goes here
-//         // insert code goes here
-//         // display the results of your operation
-//         console.log("mongo connected!");
-//     } finally {
-//         // Ensures that the client will close when you finish/error
-//         await client.close();
-//     }
-// }
-// run().catch(console.dir);
 
+//////////////// Diagnostics logging section
 ////////////////
 document.addEventListener("DOMContentLoaded", function(event) {
     const logTextArea = document.getElementById('log');
@@ -32,6 +19,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       logTextArea.value += text + '\n';
     }
 
+    // check whether http server is up and running
     const http = require('http');
     const options = {
     host: '127.0.0.1',
@@ -48,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     });
     request.end();
 
+    // check whether mongodb server is up and running
     const options1 = {
         host: '0.0.0.0',
         port: 27017,
@@ -66,33 +55,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
 });
 /////////////
 
-
+// closing the window ~ used only in dev phase
 function closeFn1() {
-    // console.log('Clicked1');
     ipcRenderer.send('close')
 }
 
+// function that sends the username, password to mongoDB and verifies the credentials
 function subCreds() {
     async function run() {
         try {
             await client.connect();
-            // database and collection code goes here
-            // insert code goes here
-            // display the results of your operation
             
-            // console.log("mongo connected!");
             var usrnm = document.getElementById("usrname")
             var passd = document.getElementById("pwd")
-            // console.log("username=",usrnm.value)
-            // console.log("pass=",passd.value)
             var db1 = client.db("tempdemo")
             const user = await db1.collection("userinfo").findOne({ "name":usrnm.value });
-            // const user = db1.collection("userinfo").find({ name:{usrnm},password:{passd} });
-            // console.log(user)
-            // console.log(user.password)
             if(!user || (user.password != passd.value))
             {
-                // console.log("Incorrect credentials")
                 alert("Alert: Incorrect credentials");
                 usrnm.value=""
                 passd.value=""
@@ -104,7 +83,6 @@ function subCreds() {
                 passd.value=""
                 ipcRenderer.send("loggedin")
             }
-            // console.log("mongo done!");
         } finally {
             // Ensures that the client will close when you finish/error
             await client.close();
@@ -115,6 +93,7 @@ function subCreds() {
     
 }
 
+// Function that stops the spinning css-loader, and displays wecome page. Called when diagonostics is completed and successful.
 function stopLoader() {
     var loader = document.getElementById("loader");
     var hellotitle = document.getElementById("hellotitle");
@@ -132,9 +111,5 @@ function stopLoader() {
     lblDiag.style.display = "none";
     log.style.display = "none"
 
-    // ---- no longer used ----
-    // setTimeout(function() {
-    //   }, 0);
 }
 ipcRenderer.send('ready-diag')
-// setTimeout(stopLoader, 5000);

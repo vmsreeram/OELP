@@ -98,6 +98,36 @@ ipcMain.on('loggedin', () => {
 
 });
 
+
+// function to create window that is displayed when login is successful
+let win1_adm;
+ipcMain.on('loggedin_adm', () => {
+    win.close();                // to close the previous window
+    win1_adm= new BrowserWindow({
+        frame: false,
+        // fullscreen: true,            // To be uncommented before final testing/depolyment
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: true,
+        },
+      });
+      win1_adm.loadURL(url.format({
+        pathname: path.join(__dirname, 'adminpage.html'),
+        protocol: 'file',
+        slashes:true
+    }));
+    
+    // Used for debugging
+    win1_adm.webContents.openDevTools();
+
+    win1_adm.on('closed', () => {
+        win1_adm = null;
+    })
+
+
+});
+
 // once index is ready, index.js calles ready-diag through ipc. Now main.js will httprequest the python server
 ipcMain.on('ready-diag', (event, arg) => {
     var XMLHttpRequest = require('xhr2');

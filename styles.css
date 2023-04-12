@@ -2,6 +2,9 @@ h1 {
     color: orange;
     display: none;
 }
+h2 {
+    color: orange;
+}
 #loginboxes {
     width: 100%;
     padding: 50px 0;

@@ -78,10 +78,21 @@ function subCreds() {
             }
             else
             {
-                alert("Alert: Logged in");
-                usrnm.value=""
-                passd.value=""
-                ipcRenderer.send("loggedin")
+                if(user.isadmin == "1")
+                {
+                    alert("Alert: Logged in as admin");
+                    usrnm.value=""
+                    passd.value=""
+                    ipcRenderer.send("loggedin_adm")
+
+                }
+                else
+                {
+                    alert("Alert: Logged in");
+                    usrnm.value=""
+                    passd.value=""
+                    ipcRenderer.send("loggedin")
+                }
             }
         } finally {
             // Ensures that the client will close when you finish/error

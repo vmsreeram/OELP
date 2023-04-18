@@ -64,3 +64,8 @@ function subCreds() {
     }
     run1().catch(console.dir);
 }
+
+document.getElementById("backbtn").onclick = function () {
+    // location.href = "index.html";
+    ipcRenderer.send('admin_logout');
+};

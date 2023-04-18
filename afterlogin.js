@@ -19,3 +19,8 @@ function testSetFn3() {
     // ipcRenderer.send('close')
 }
 
+
+document.getElementById("userlogout").onclick = function () {
+    // location.href = "index.html";
+    ipcRenderer.send('user_logout');
+};

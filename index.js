@@ -112,7 +112,8 @@ function stopLoader() {
     var loginboxes = document.getElementById("loginboxes");
     var lblDiag = document.getElementById("lblDiag")
     var log = document.getElementById("log")
-    
+    var wifibtn = document.getElementById("wificnctbtn")
+    wifibtn.style.display = "block";
     loader.style.animation = "none";
     loader.style.animation = "none";
     loader.hidden="true";

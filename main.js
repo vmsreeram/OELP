@@ -157,6 +157,35 @@ ipcMain.on('admin_logout', () => {
 });
 
 
+
+ipcMain.on('user_logout', () => {
+    win1.close();                // to close the previous window
+    win= new BrowserWindow({
+        frame: false,
+        // fullscreen: true,            // To be uncommented before final testing/depolyment
+        webPreferences: {
+          nodeIntegration: true,
+          contextIsolation: false,
+          enableRemoteModule: true,
+        },
+      });
+      win.loadURL(url.format({
+        pathname: path.join(__dirname, 'index.html'),
+        protocol: 'file',
+        slashes:true
+    }));
+    
+    // Used for debugging
+    win.webContents.openDevTools();
+
+    win.on('closed', () => {
+        win = null;
+    })
+
+
+});
+
+
 flag=false;
 
 // once index is ready, index.js calles ready-diag through ipc. Now main.js will httprequest the python server

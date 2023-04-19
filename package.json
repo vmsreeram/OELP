@@ -23,6 +23,8 @@
     "xhr2": "^0.2.1"
   },
   "devDependencies": {
-    "electron": "^23.0.0"
+    "electron": "^23.0.0",
+    "google-auth-library": "^7.4.1",
+    "googleapis": "^77.0.0"
   }
 }

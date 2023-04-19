@@ -106,6 +106,29 @@ function subCreds() {
 
 // Function that stops the spinning css-loader, and displays wecome page. Called when diagonostics is completed and successful.
 function stopLoader() {
+    async function run() {
+        try {
+            await client.connect();
+            var db1 = client.db("tempdemo")
+            const apikey = await db1.collection("deviceinfo").findOne({"name":"admin1"});
+            if(!apikey){
+                console.log("API key not present");
+                ipcRenderer.send('oauth-redirect');
+                ipcRenderer.on('ouath-redirect-response',()=>{
+                    ipcRenderer.send('admin_passwordset');
+                });
+            }
+            else{
+                console.log("APT key present");
+            }
+        }
+         finally {
+            // Ensures that the client will close when you finish/error
+            await client.close();
+        }
+    }
+    run().catch(console.dir);
+
     var loader = document.getElementById("loader");
     var hellotitle = document.getElementById("hellotitle");
     var body = document.querySelector("body");

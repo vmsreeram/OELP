@@ -110,16 +110,27 @@ function stopLoader() {
         try {
             await client.connect();
             var db1 = client.db("tempdemo")
-            const apikey = await db1.collection("deviceinfo").findOne({"name":"admin1"});
+            const apikey = await db1.collection("deviceinfo").findOne({"name":"admin"});
             if(!apikey){
                 console.log("API key not present");
                 ipcRenderer.send('oauth-redirect');
-                ipcRenderer.on('ouath-redirect-response',()=>{
-                    ipcRenderer.send('admin_passwordset');
-                });
+                // ipcRenderer.on('ouath-redirect-response',async (event, arg)=>{
+                //     const emailAddress = arg[0];
+                //     console.log(emailAddress);
+                //     //
+                //     var db2 = client.db("company_db")
+                //     const Entry = await db2.collection("customer").findOne({"email":emailAddress});
+                //     if(!Entry) {
+                //         //
+                //     } else {
+                //         db1.collection("deviceinfo").insertOne({"name":"admin","api_key":Entry.apikey})
+                //         ipcRenderer.send('admin_passwordset');
+                //     }
+
+                // });
             }
             else{
-                console.log("APT key present");
+                console.log("API key present");
             }
         }
          finally {

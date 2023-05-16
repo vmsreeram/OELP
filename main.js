@@ -11,8 +11,29 @@ const url = require("url");
 const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://0.0.0.0:27017/";
+const client = new MongoClient(uri);
+
+
 const wifi = require('wifi-control');
 wifi.init();
+
+// ipcMain.on('ouath-redirect-response',async (event, arg)=>{
+//   const emailAddress = arg[0];
+//   console.log(emailAddress);
+//   //
+//   var db2 = client.db("company_db")
+//   const Entry = await db2.collection("customer").findOne({"email":emailAddress});
+//   if(!Entry) {
+//     console.log("!Entry");
+//   } else {
+//     console.log("Entry!");
+//       db1.collection("deviceinfo").insertOne({"name":"admin","api_key":Entry.apikey})
+//       ipcRenderer.send('admin_passwordset');
+//   }
+
+// });
 
 ipcMain.handle('show-message-box', (event, options) => {
     const result = dialog.showMessageBoxSync({
@@ -54,6 +75,58 @@ function createWindow() {
         win = null;
     })
 }
+let win_admReg;
+function createAdminRegWindow() {
+  win_admReg= new BrowserWindow({
+      frame: false,
+      // fullscreen: true,            // To be uncommented before final testing/depolyment
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true,
+      },
+    });
+    
+  // index.html is loaded as the first window on startup
+  win_admReg.loadURL(url.format({
+      pathname: path.join(__dirname, 'setAdmin.html'),
+      protocol: 'file',
+      slashes:true
+  }));
+
+  // Used for debugging
+  win_admReg.webContents.openDevTools();
+  win_admReg.on('closed', () => {
+    win_admReg = null;
+  })
+}
+
+ipcMain.on('adminReg_logout', () => {
+  win_admReg.close();                // to close the previous window
+  win= new BrowserWindow({
+      frame: false,
+      // fullscreen: true,            // To be uncommented before final testing/depolyment
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true,
+      },
+    });
+    win.loadURL(url.format({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file',
+      slashes:true
+  }));
+  
+  // Used for debugging
+  win.webContents.openDevTools();
+
+  win.on('closed', () => {
+      win = null;
+  })
+
+
+});
 
 app.on('ready',createWindow);
 app.on('window-all-closed', () => {
@@ -245,13 +318,14 @@ const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET,redirectUri = 'ht
   // Open the Google OAuth consent page in the Electron window
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
+    // prompt:'none',
     scope: SCOPES.join(' ')
   });
 
   oauthwin.loadURL(authUrl);
 
   // Handle the Google OAuth callback
-  win.webContents.on('will-redirect', async (event, url) => {
+  oauthwin.webContents.on('will-redirect', async (event, url) => {
     // Parse the authorization code from the callback URL
     const urlParams = new URLSearchParams(new URL(url).search);
     const authorizationCode = urlParams.get('code');
@@ -269,13 +343,53 @@ const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET,redirectUri = 'ht
         resourceName: 'people/me',
         personFields: 'emailAddresses,names'
       });
-      console.log("here");
+      console.log("here1");
       // Log the user's email and name
       console.log(`Email: ${data.emailAddresses[0].value}`);
       console.log(`Name: ${data.names[0].displayName}`);
-       event.sender.send('ouath-redirect-response',data.emailAddresses[0].value);
+      //  event.sender.send('ouath-redirect-response',data.emailAddresses[0].value);
+
+       const emailAddress = data.emailAddresses[0].value;
+        console.log(emailAddress);
+        //
+        var db1 = client.db("tempdemo")
+        var db2 = client.db("company_db")
+        const Entry = await db2.collection("customer").findOne({"email":emailAddress});
+        if(!Entry) {
+          console.log("!Entry");
+        // oauthwin.close();
+        //   createWindow();
+        } else {
+          console.log("Entry!");
+            db1.collection("deviceinfo").insertOne({"name":"admin","api_key":Entry.apikey})
+            // ipcRenderer.send('admin_passwordset');
+        }
+      
+        // oauthwin.close();          // < ----
+
+        // win = new BrowserWindow({
+        //   frame: false,
+        //   // fullscreen: true,            // To be uncommented before final testing/depolyment
+        //   webPreferences: {
+        //     nodeIntegration: true,
+        //     contextIsolation: false,
+        //     enableRemoteModule: true,
+        //   },
+        // });
+        
+        // const url = new URL({
+        //   pathname: path.join(__dirname, 'setAdmin.html'),
+        //   protocol: 'file',
+        //   slashes: true,
+        // });
+        
+        // win.loadURL(url.toString());
+        createAdminRegWindow();
+
+
+        
       // Close the Electron window
-      win.close();
+
     } catch (error) {
       console.error(error);
     }

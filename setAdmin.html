@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles2.css">
+    <title>Admin</title>
+</head>
+<body>
+    <input type="button" value="Close" id="closeBtn1" onclick="closeFn1()">
+    <h2>Welcome, Admin</h2>
+    <div>
+        <div id="loginboxes">
+            <h3>Add Admin User</h3>
+            <table>
+                <tr>
+                    <td>Username:</td> 
+                    <td><input type="text" name="username" id="usrname" placeholder="username"></td>
+                </tr>
+                <tr>
+                    <td>Password:</td> 
+                    <td><input type="password" name="password" id="pwd" placeholder="password"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="button" value="Submit" onclick="subCreds()"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <button id="backbtn" class="float-left submit-button" >Logout</button>
+
+    <!-- <script type="text/javascript">
+        
+    </script> -->
+
+    <script src="setAdmin.js"></script>
+</body>
+</html>

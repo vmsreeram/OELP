@@ -318,7 +318,7 @@ const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET,redirectUri = 'ht
   // Open the Google OAuth consent page in the Electron window
   const authUrl = oAuth2Client.generateAuthUrl({
     access_type: 'offline',
-    // prompt:'none',
+    prompt:'select_account',
     scope: SCOPES.join(' ')
   });
 
@@ -357,15 +357,17 @@ const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET,redirectUri = 'ht
         const Entry = await db2.collection("customer").findOne({"email":emailAddress});
         if(!Entry) {
           console.log("!Entry");
-        // oauthwin.close();
-        //   createWindow();
+          // globalThis.alert('This user is not registered in the company databse');
+        oauthwin.close();
+          createWindow();
         } else {
           console.log("Entry!");
             db1.collection("deviceinfo").insertOne({"name":"admin","api_key":Entry.apikey})
             // ipcRenderer.send('admin_passwordset');
+            oauthwin.close();          // < ----
+            createAdminRegWindow();
         }
       
-        // oauthwin.close();          // < ----
 
         // win = new BrowserWindow({
         //   frame: false,
@@ -384,7 +386,6 @@ const oAuth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET,redirectUri = 'ht
         // });
         
         // win.loadURL(url.toString());
-        createAdminRegWindow();
 
 
         

@@ -1,9 +1,9 @@
 const { ipcRenderer } = require('electron');
 const Papa = require('papaparse');
-const usbDetect = require('usb-detection');
+// const usbDetect = require('usb-detection');
 const openCsvButton = document.getElementById('open-csv-button');
 const csvContent = document.getElementById('csv-content');
-const saveToUsbButton = document.getElementById('save-to-usb-button');
+// const saveToUsbButton = document.getElementById('save-to-usb-button');
 
 
 openCsvButton.addEventListener('click', async () => {
@@ -23,25 +23,25 @@ openCsvButton.addEventListener('click', async () => {
   }
 });
 
-saveToUsbButton.addEventListener('click', async () => {
-    try {
-      const usbDevices = await usbDetect.find();
-      const usbDrive = usbDevices.find((device) => device.isUSB && !device.isMounted);
-      if (usbDrive) {
-        const csvData = await fs.promises.readFile(selectedFilePath, { encoding: 'utf-8' });
-        const csvFileName = selectedFilePath.split(/[\\/]/).pop();
-        const usbPath = usbDrive.mountpoints[0].path;
-        const csvFilePath = `${usbPath}\\${csvFileName}`;
-        await fs.promises.writeFile(csvFilePath, csvData, { encoding: 'utf-8' });
-        alert(`CSV file saved to USB drive ${usbDrive.deviceName}!`);
-      } else {
-        alert('No unmounted USB drives found.');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('Error saving CSV file to USB drive.');
-    }
-  });
+// saveToUsbButton.addEventListener('click', async () => {
+//     try {
+//       const usbDevices = await usbDetect.find();
+//       const usbDrive = usbDevices.find((device) => device.isUSB && !device.isMounted);
+//       if (usbDrive) {
+//         const csvData = await fs.promises.readFile(selectedFilePath, { encoding: 'utf-8' });
+//         const csvFileName = selectedFilePath.split(/[\\/]/).pop();
+//         const usbPath = usbDrive.mountpoints[0].path;
+//         const csvFilePath = `${usbPath}\\${csvFileName}`;
+//         await fs.promises.writeFile(csvFilePath, csvData, { encoding: 'utf-8' });
+//         alert(`CSV file saved to USB drive ${usbDrive.deviceName}!`);
+//       } else {
+//         alert('No unmounted USB drives found.');
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       alert('Error saving CSV file to USB drive.');
+//     }
+//   });
 
 
 ipcRenderer.on('csv-data', (event, csvData) => {

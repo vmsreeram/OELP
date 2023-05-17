@@ -15,7 +15,7 @@ async function run() {
         await client.connect();
         
         var db1 = client.db("tempdemo")
-        const user = await db1.collection("deviceinfo").findOne({ "name":"admin1" });
+        const user = await db1.collection("deviceinfo").findOne({ "name":"admin" });
         if(!user)
         {
             alert("Alert: API Key not found");

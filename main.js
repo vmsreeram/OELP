@@ -273,22 +273,45 @@ ipcMain.on('ready-diag', (event, arg) => {
         event.sender.send('fn-called');
     }
     else {
-    var XMLHttpRequest = require('xhr2');
-    let request = new XMLHttpRequest();
-    request.open("GET","http://127.0.0.1:9999")
-    request.send()
-    request.onload = () => {
-        // if request successful,
-        if(request.status === 200){
-            console.log("successful");
-            event.sender.send('fn-called');
-            flag=true;
+      var XMLHttpRequest = require('xhr2');
+      const maxdelay = 120000;
+      
+      function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
+      async function checkServer() {
+        let delayTime = 1000; // initial delay time
+        while (delayTime <= maxdelay) {
+          let request = new XMLHttpRequest();
+          request.open("GET", "http://127.0.0.1:9999");
+          request.send();
+          var serverUp = false;
+          request.onload = () => {
+            serverUp = true;
+            if (request.status === 200) {
+              console.log("Server is up!");
+              flag = true;
+              event.sender.send('fn-called');
+            } else {
+              console.log("Server is down!");
+            }
+          };
+          if (serverUp === false) {
+            console.log(`Waiting for ${delayTime} milliseconds`);
+            await delay(delayTime); // wait for the specified delay time
+            delayTime *= 2; // double the delay time for the next iteration
+          }
         }
-        else{
-            console.log("failed")
+        if (delayTime > maxdelay && flag == false) {
+          console.log("Server did not respond within the specified time.");
+          win.close();
         }
-    }
-};
+      }
+      checkServer();
+      
+    };
+    
 });
   
 let oauthwin;

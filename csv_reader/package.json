@@ -1,0 +1,20 @@
+{
+  "name": "csv_reader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^24.3.0"
+  },
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "papaparse": "^5.4.1"
+  }
+}

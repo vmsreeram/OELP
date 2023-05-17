@@ -22,7 +22,7 @@ async function run() {
         }
         else
         {
-            alert("Alert: API Key found");
+            // alert("Alert: API Key found");
             document.getElementById('loginboxes').style.display = 'block';
         }
     } finally {
@@ -54,7 +54,8 @@ function subCreds() {
             {
                 alert("Alert: User `"+usrnm.value+"` already present in db");
             }
-
+            document.getElementById("usrname").value="";
+            document.getElementById("pwd").value="";
             
   
         } finally {

@@ -64,6 +64,24 @@ function closeFn1() {
 function subCreds() {
     async function run() {
         try {
+            ////
+            const options1 = {
+                host: '0.0.0.0',
+                port: 27017,
+                path: '/'
+            };
+            const http = require('http');
+            const request1 = http.request(options1, (response) => {
+                
+            });
+            request1.on('error', (error) => {
+                alert(`MongoDB Server is not running.`);
+                console.log(`MongoDB Server error: ${error.message}`);
+                document.getElementById("usrname").value="";
+                document.getElementById("pwd").value="";
+            });
+            request1.end();
+            ////
             await client.connect();
             
             var usrnm = document.getElementById("usrname")

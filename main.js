@@ -16,6 +16,29 @@ const uri = "mongodb://0.0.0.0:27017/";
 const client = new MongoClient(uri);
 
 
+// const express = require('express');
+// const Expapp = express();
+// const port = 8080;
+// let win_user_tests;
+
+// // Endpoint to handle the move-dot request
+// Expapp.get('/move-dot', (req, res) => {
+//   const { x, y } = req.query;
+//   moveDot(parseInt(x), parseInt(y));
+//   res.send('moveDot function called successfully');
+// });
+
+// function moveDot(x, y) {
+//   console.log(`Moving dot to (${x}, ${y})`);
+//   win_user_tests.webContents.send('move-right');
+// }
+
+// Expapp.listen(port, () => {
+//   console.log(`Server running on port ${port}`);
+// });
+
+
+
 const wifi = require('wifi-control');
 wifi.init();
 
@@ -428,3 +451,32 @@ ipcMain.on('admin_passwordset',()=>{
 
   console.log("Set Admin Password");
 })
+
+
+// function to create window that is displayed when login is successful
+ipcMain.on('user_test1', () => {
+  win1.close();                // to close the previous window
+  win_user_tests= new BrowserWindow({
+      frame: false,
+      // fullscreen: true,            // To be uncommented before final testing/depolyment
+      webPreferences: {
+        nodeIntegration: true,
+        contextIsolation: false,
+        enableRemoteModule: true,
+      },
+    });
+    win_user_tests.loadURL(url.format({
+      pathname: path.join(__dirname, 'user_tests.html'),
+      protocol: 'file',
+      slashes:true
+  }));
+  
+  // Used for debugging
+  win_user_tests.webContents.openDevTools();
+
+  win_user_tests.on('closed', () => {
+    win_user_tests = null;
+  })
+
+
+});

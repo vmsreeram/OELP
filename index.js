@@ -96,19 +96,24 @@ function subCreds() {
             }
             else
             {
+                
                 if(user.isadmin == "1")
                 {
+                    const data = {name:"admin"};
                     alert("Alert: Logged in as admin");
                     usrnm.value=""
                     passd.value=""
+                    ipcRenderer.send('setuser',data);
                     ipcRenderer.send("loggedin_adm")
 
                 }
                 else
                 {
+                    const data = {name:usrnm.value};
                     alert("Alert: Logged in");
                     usrnm.value=""
                     passd.value=""
+                    ipcRenderer.send('setuser',data);
                     ipcRenderer.send("loggedin")
                 }
             }

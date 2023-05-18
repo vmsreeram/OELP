@@ -168,6 +168,17 @@ ipcMain.on('close', () => {
   app.quit()
 });
 
+let session_user;
+
+ipcMain.on('setuser',(event,data)=>{
+  session_user = data.name;
+  console.log(session_user);
+})
+
+ipcMain.on('getuser', (event) => {
+  event.reply('user-details', session_user);
+});
+
 // function to create window that is displayed when login is successful
 let win1;
 ipcMain.on('loggedin', () => {

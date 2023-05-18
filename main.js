@@ -480,3 +480,29 @@ ipcMain.on('user_test1', () => {
 
 
 });
+
+ipcMain.on('test1-back-called',()=>{
+  win_user_tests.close();
+  win1= new BrowserWindow({
+    frame: false,
+    // fullscreen: true,            // To be uncommented before final testing/depolyment
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
+  });
+win1.loadURL(url.format({
+    pathname: path.join(__dirname, 'afterlogin.html'),
+    protocol: 'file',
+    slashes:true
+}));
+
+// Used for debugging
+win1.webContents.openDevTools();
+
+win1.on('closed', () => {
+    win1 = null;
+})
+
+})

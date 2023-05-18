@@ -9,6 +9,7 @@
 </head>
 <body>
     <input type="button" value="Close" id="closeBtn1" onclick="closeFn1()">
+    <p id="credits_left"></p>
     <h2>Welcome, Admin</h2>
     <div>
         <div id="loginboxes" style="display: none;">
@@ -24,6 +25,19 @@
                 </tr>
                 <tr>
                     <td colspan="2"><input type="button" value="Submit" onclick="subCreds()"></td>
+                </tr>
+            </table>
+        </div>
+
+        <div id="addcreditboxes" style="display: none;">
+            <h3>Add credits</h3>
+            <table>
+                <tr>
+                    <td>Credits:</td> 
+                    <td><input type="number" name="credits" id="credits_amount" placeholder="credits"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="button" value="Submit" onclick="updateCredits()"></td>
                 </tr>
             </table>
         </div>

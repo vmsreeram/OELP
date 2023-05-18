@@ -13,7 +13,7 @@ openCsvButton.addEventListener('click', async () => {
     if (result) {
       csvContent.value = result;
       csvFilePath = result.filePath;
-      // saveToUsbButton.disabled = false;
+      saveToUsbButton.disabled = false;
     } else {
       csvContent.value = '';
       saveToUsbButton.disabled = true;
@@ -58,7 +58,7 @@ saveToUsbButton.addEventListener('click', async () => {
 ipcRenderer.on('csv-data', (event, csvData) => {
   if (csvData) {
     csvContent.value = csvData;
-    // saveToUsbButton.disabled = false;
+    saveToUsbButton.disabled = false;
   } else {
     csvContent.value = '';
     saveToUsbButton.disabled = true;

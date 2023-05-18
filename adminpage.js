@@ -91,14 +91,16 @@ async function updateCredits(){
             var db1 = client.db("tempdemo");
             var credits_add = document.getElementById("credits_amount");
             console.log(credits_add.value)
-            const currentAmount = await get_cur_amount();
-            console.log(currentAmount)
-            const result = await db1.collection('credits').updateOne(
-                { name: 'credits' },
-                { $set: { amount: currentAmount+parseInt(credits_add.value )} }
-              );
-            updateCreditsDisplay();
-            document.getElementById("credits_amount").value="";
+            if(credits_add.value != "") {
+                const currentAmount = await get_cur_amount();
+                console.log(currentAmount)
+                const result = await db1.collection('credits').updateOne(
+                    { name: 'credits' },
+                    { $set: { amount: currentAmount+parseInt(credits_add.value )} }
+                );
+                updateCreditsDisplay();
+                document.getElementById("credits_amount").value="";
+            }
 }
 
 document.getElementById("backbtn").onclick = function () {

@@ -1,5 +1,6 @@
 // interprocess communication is done using ipcRenderer. 
 const { ipcRenderer } = require('electron');
+const wifi = require('node-wifi');
 
 const { MongoClient } = require("mongodb");
 const uri = "mongodb://0.0.0.0:27017/";
@@ -26,6 +27,7 @@ async function updateCreditsDisplay() {
   updateCreditsDisplay();
   
 let test1_amount = 100;
+let test2_amount = 100;
 
 async function testSetFn1() {
     // alert("Alert: To be implemented");
@@ -36,6 +38,8 @@ async function testSetFn1() {
             { name: 'credits' },
             { $set: { amount: amount_left.amount-test1_amount } }
           );
+          updateCreditsDisplay();
+
     ipcRenderer.send('user_test1');
 
     }
@@ -52,8 +56,32 @@ async function testSetFn1() {
 
   
 function testSetFn2() {
-    alert("Alert: To be implemented");
-    // ipcRenderer.send('close')
+    wifi.init();
+    wifi.getCurrentConnections(async (err, currentConnections) => {
+        try {
+            console.log("inside");
+          if (currentConnections.length === 0) {
+           alert("Wifi needed for this test");
+          } else {
+            const amount_left = await db1.collection("credits").findOne({ "name":"credits" });
+            if(test2_amount <= amount_left.amount){
+                const result = await db1.collection('credits').updateOne(
+                    { name: 'credits' },
+                    { $set: { amount: amount_left.amount-test1_amount } }
+                  );
+                  alert("test completed");
+                }
+                else{
+                    alert("Insufficient credits")
+                }
+                  updateCreditsDisplay();
+
+          }
+        } catch (e) {
+          console.log(e)
+        }
+      });
+      console.log("here")
 }
 function testSetFn3() {
     alert("Alert: To be implemented");

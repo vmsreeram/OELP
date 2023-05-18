@@ -6,8 +6,31 @@ const { MongoClient } = require("mongodb");
 const uri = "mongodb://0.0.0.0:27017/";
 const client = new MongoClient(uri);
 
-// import { BrowserWindow } from 'electron';
 
+////
+let globalFlag = false;
+let GlobalSessUsr;
+ipcRenderer.send('getuser');
+ipcRenderer.on('user-details',async (event,sessionuser)=>{
+  if(globalFlag == false){
+    console.log('sessionuser_glb=');
+    console.log(sessionuser);
+    alert('sessionuser_glb='+sessionuser)
+    GlobalSessUsr = sessionuser;
+    ///
+    const cur_user = await db1.collection("userinfo").findOne({ "name": sessionuser });
+    if(cur_user.privilege > test1_priv){
+        document.getElementById("testSetBtn1").disabled=true;
+        // alert('hide testSetBtn1')
+      }
+      if(cur_user.privilege > test2_priv){
+        document.getElementById("testSetBtn2").disabled=true;
+        // alert('hide testSetBtn2')
+    }
+    globalFlag = true;
+  }
+});
+////
 
 // closing the window ~ used only in dev phase
 function closeFn1() {
@@ -29,31 +52,8 @@ async function updateCreditsDisplay() {
 let test1_amount = 100;
 let test1_priv = 0;
 let test2_amount = 150;
+let test2_priv = 1;
 
-/*
-async function checkSimServer() {
-  // check whether http server is up and running
-  const http = require('http');
-  const options = {
-  host: '127.0.0.1',
-  port: 9876,
-  path: '/'
-  };
-  const request = http.request(options, (response) => {
-      console.log(`checkSimServer: HTTP Server up and running.`);
-      console.log(`checkSimServer: HTTP Server status code: ${response.statusCode}`);
-      request.end();
-      return true;
-  });
-  request.on('error', (error) => {
-      alert(`checkSimServer: HTTP Server is not running.`);
-      console.log(`checkSimServer: HTTP Server error: ${error.message}`);
-      request.end();
-      return false;
-  });
-  request.end();
-}
-*/
 async function checkSimServer() {
   const http = require('http');
   const options = {
@@ -80,33 +80,6 @@ async function checkSimServer() {
   });
 }
 
-/*
-async function testSetFn1() {
-    // alert("Alert: To be implemented");
-    var db1 = client.db("tempdemo")
-    const amount_left = await db1.collection("credits").findOne({ "name":"credits" });
-    if(test1_amount <= amount_left.amount){
-      const isServerUp = await checkSimServer(); // Wait for checkSimServer() to return a value
-    alert(`Received ${isServerUp} from checkSimServer`);
-    
-    if (isServerUp)  {
-              const result = await db1.collection('credits').updateOne(
-                  { name: 'credits' },
-                  { $set: { amount: amount_left.amount-test1_amount } }
-                );
-                updateCreditsDisplay();
-
-          ipcRenderer.send('user_test1');
-        }
-
-    }
-    else{
-        alert("Insufficient credits");
-    }
-     
-}
-*/
-
 function getCurrentTimestamp() {
   const timestamp = Date.now();
   const dateObj = new Date(timestamp);
@@ -128,23 +101,12 @@ async function testSetFn1() {
   if (test1_amount <= amount_left.amount) {
     const isServerUp = await checkSimServer();
     if (isServerUp) {
+      const result = await db1.collection('credits').updateOne(
+          { name: 'credits' },
+          { $set: { amount: amount_left.amount - test1_amount } }
+        );
+        updateCreditsDisplay();
       
-      ipcRenderer.send('getuser');
-      ipcRenderer.on('user-details',async (event,sessionuser)=>{
-        console.log('sessionuser=');
-        console.log(sessionuser);
-        alert('sessionuser='+sessionuser)
-        ///
-        const cur_user = await db1.collection("userinfo").findOne({ "name": sessionuser });
-        if(cur_user.privilege > test1_priv){
-            alert("Insufficient privilege")
-            return;
-        }
-        const result = await db1.collection('credits').updateOne(
-            { name: 'credits' },
-            { $set: { amount: amount_left.amount - test1_amount } }
-          );
-          updateCreditsDisplay();
 
         const fs = require('fs');
 
@@ -169,7 +131,7 @@ async function testSetFn1() {
 
         async function onCloseWindow() {
           const userLogs = [
-            { user: `${sessionuser}`,test: 'test 1',  used_credit: test1_amount, timeStamp: getCurrentTimestamp() },
+            { user: `${GlobalSessUsr}`,test: 'test 1',  used_credit: test1_amount, timeStamp: getCurrentTimestamp() },
           ];
           const csv = convertToCSV(userLogs);
           const filename = 'userLogs.csv';
@@ -184,10 +146,8 @@ async function testSetFn1() {
         }
        onCloseWindow();
         ///
-      });
 
 
-      // ipcRenderer.send('user_test1');
     } else {
       alert("HTTP server is not running.");
     }
@@ -206,18 +166,12 @@ function testSetFn2() {
           } else {
             const amount_left = await db1.collection("credits").findOne({ "name":"credits" });
             if(test2_amount <= amount_left.amount){
+
                 const result = await db1.collection('credits').updateOne(
                     { name: 'credits' },
-                    { $set: { amount: amount_left.amount-test1_amount } }
+                    { $set: { amount: amount_left.amount-test2_amount } }
                   );
-                  ////
-                  ipcRenderer.send('getuser');
-                  ipcRenderer.on('user-details',(event,sessionuser)=>{
-                    console.log('sessionuser=');
-                    console.log(sessionuser);
-                    alert('sessionuser='+sessionuser)
-                    ///
-                    
+                              
 
                     const fs = require('fs');
 
@@ -242,24 +196,20 @@ function testSetFn2() {
 
                     async function onCloseWindow() {
                       const userLogs = [
-                        { user: `${sessionuser}`,test: 'test 2', used_credit: test2_amount, timeStamp: getCurrentTimestamp() },
+                        { user: `${GlobalSessUsr}`,test: 'test 2', used_credit: test2_amount, timeStamp: getCurrentTimestamp() },
                       ];
                       const csv = convertToCSV(userLogs);
                       const filename = 'userLogs.csv';
                       try {
                         await saveFile(csv, filename);
-                        // Destroy the window here
-                        // ipcRenderer.send('user_test1');
-                        //
                       } catch (error) {
                         console.error(error);
                       }
                     }
                   onCloseWindow();
                     ///
-                  });
+                    alert("test completed");
                   ////
-                  alert("test completed");
                 }
                 else{
                     alert("Insufficient credits")

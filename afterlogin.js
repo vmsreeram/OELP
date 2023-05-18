@@ -27,6 +27,7 @@ async function updateCreditsDisplay() {
   updateCreditsDisplay();
   
 let test1_amount = 100;
+let test1_priv = 0;
 let test2_amount = 150;
 
 /*
@@ -127,18 +128,23 @@ async function testSetFn1() {
   if (test1_amount <= amount_left.amount) {
     const isServerUp = await checkSimServer();
     if (isServerUp) {
-      const result = await db1.collection('credits').updateOne(
-        { name: 'credits' },
-        { $set: { amount: amount_left.amount - test1_amount } }
-      );
-      updateCreditsDisplay();
+      
       ipcRenderer.send('getuser');
-      ipcRenderer.on('user-details',(event,sessionuser)=>{
+      ipcRenderer.on('user-details',async (event,sessionuser)=>{
         console.log('sessionuser=');
         console.log(sessionuser);
         alert('sessionuser='+sessionuser)
         ///
-        
+        const cur_user = await db1.collection("userinfo").findOne({ "name": sessionuser });
+        if(cur_user.privilege > test1_priv){
+            alert("Insufficient privilege")
+            return;
+        }
+        const result = await db1.collection('credits').updateOne(
+            { name: 'credits' },
+            { $set: { amount: amount_left.amount - test1_amount } }
+          );
+          updateCreditsDisplay();
 
         const fs = require('fs');
 

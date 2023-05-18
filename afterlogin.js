@@ -27,33 +27,104 @@ async function updateCreditsDisplay() {
   updateCreditsDisplay();
   
 let test1_amount = 100;
-let test2_amount = 100;
+let test2_amount = 150;
 
+/*
+async function checkSimServer() {
+  // check whether http server is up and running
+  const http = require('http');
+  const options = {
+  host: '127.0.0.1',
+  port: 9876,
+  path: '/'
+  };
+  const request = http.request(options, (response) => {
+      console.log(`checkSimServer: HTTP Server up and running.`);
+      console.log(`checkSimServer: HTTP Server status code: ${response.statusCode}`);
+      request.end();
+      return true;
+  });
+  request.on('error', (error) => {
+      alert(`checkSimServer: HTTP Server is not running.`);
+      console.log(`checkSimServer: HTTP Server error: ${error.message}`);
+      request.end();
+      return false;
+  });
+  request.end();
+}
+*/
+async function checkSimServer() {
+  const http = require('http');
+  const options = {
+    host: '127.0.0.1',
+    port: 9876,
+    path: '/'
+  };
+
+  return new Promise((resolve, reject) => {
+    const request = http.request(options, (response) => {
+      console.log(`checkSimServer: HTTP Server up and running.`);
+      console.log(`checkSimServer: HTTP Server status code: ${response.statusCode}`);
+      request.end();
+      resolve(true); // Resolve the promise with a value of true if the request completes successfully
+    });
+
+    request.on('error', (error) => {
+      console.log(`checkSimServer: HTTP Server error: ${error.message}`);
+      request.end();
+      resolve(false); // Resolve the promise with a value of false if the request fails
+    });
+
+    request.end();
+  });
+}
+
+/*
 async function testSetFn1() {
     // alert("Alert: To be implemented");
     var db1 = client.db("tempdemo")
     const amount_left = await db1.collection("credits").findOne({ "name":"credits" });
     if(test1_amount <= amount_left.amount){
-        const result = await db1.collection('credits').updateOne(
-            { name: 'credits' },
-            { $set: { amount: amount_left.amount-test1_amount } }
-          );
-          updateCreditsDisplay();
+      const isServerUp = await checkSimServer(); // Wait for checkSimServer() to return a value
+    alert(`Received ${isServerUp} from checkSimServer`);
+    
+    if (isServerUp)  {
+              const result = await db1.collection('credits').updateOne(
+                  { name: 'credits' },
+                  { $set: { amount: amount_left.amount-test1_amount } }
+                );
+                updateCreditsDisplay();
 
-    ipcRenderer.send('user_test1');
+          ipcRenderer.send('user_test1');
+        }
 
     }
     else{
         alert("Insufficient credits");
     }
-    /**
-     *  var XMLHttpRequest = require('xhr2'); 
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/moveDot?x=0&y=0");
-        xhr.send();
-     */
+     
 }
+*/
 
+async function testSetFn1() {
+  var db1 = client.db("tempdemo");
+  const amount_left = await db1.collection("credits").findOne({ "name": "credits" });
+  if (test1_amount <= amount_left.amount) {
+    const isServerUp = await checkSimServer();
+    if (isServerUp) {
+      const result = await db1.collection('credits').updateOne(
+        { name: 'credits' },
+        { $set: { amount: amount_left.amount - test1_amount } }
+      );
+      updateCreditsDisplay();
+      ipcRenderer.send('user_test1');
+    } else {
+      alert("HTTP server is not running.");
+    }
+  } else {
+    alert("Insufficient credits");
+  }
+}
   
 function testSetFn2() {
     wifi.init();

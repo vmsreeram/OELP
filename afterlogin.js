@@ -278,3 +278,6 @@ document.getElementById("userlogout").onclick = function () {
     ipcRenderer.send('user_logout');
 };
 
+document.getElementById('save_view_report').onclick = function() {
+    ipcRenderer.send('load_csv');
+}

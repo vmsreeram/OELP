@@ -1,4 +1,5 @@
 const { ipcRenderer } = require('electron');
+const xss = require('xss');
 // interprocess communication is done ipcrenderer
 ipcRenderer.on('fn-called', () => {
     // when main.js sees that diagonostics.py (in http server) has returned, it calles fn-called on ipc channel
@@ -87,8 +88,8 @@ function subCreds() {
             var usrnm = document.getElementById("usrname")
             var passd = document.getElementById("pwd")
             var db1 = client.db("tempdemo")
-            const user = await db1.collection("userinfo").findOne({ "name":usrnm.value });
-            if(!user || (user.password != passd.value))
+            const user = await db1.collection("userinfo").findOne({ "name":xss(usrnm.value) });
+            if(!user || (user.password != xss(passd.value)))
             {
                 alert("Alert: Incorrect credentials");
                 usrnm.value=""

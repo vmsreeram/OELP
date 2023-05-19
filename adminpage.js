@@ -4,6 +4,7 @@ const { ipcRenderer } = require('electron');
 const { MongoClient } = require("mongodb");
 const uri = "mongodb://0.0.0.0:27017/";
 const client = new MongoClient(uri);
+const xss = require('xss');
 
 // closing the window ~ used only in dev phase
 function closeFn1() {
@@ -58,32 +59,32 @@ function subCreds() {
             var usrnm = document.getElementById("usrname");
             var passd = document.getElementById("pwd");
             var priv = document.getElementById("privilege");
-            if(usrnm.value == ""){
+            if(xss(usrnm.value) == ""){
                 alert("Add valid username");
                 return
             }
-            if(priv.value == ""){
+            if(xss(priv.value) == ""){
                 alert("Add privilege");
                 return
             }
-            if(passd.value == ""){
+            if(xss(passd.value) == ""){
                 alert("Password should be non empty");
                 return
             }
-            const user = await db1.collection("userinfo").findOne({ "name":usrnm.value });
+            const user = await db1.collection("userinfo").findOne({ "name":xss(usrnm.value) });
             if(!user)
             {
                 await db1.collection("userinfo").insertOne({
-                    "name": usrnm.value,
-                    "password": passd.value,
-                    "privilege":priv.value,
+                    "name": xss(usrnm.value),
+                    "password": xss(passd.value),
+                    "privilege":xss(priv.value),
                     "isadmin": "0"
                   });
-                alert("Alert: User `"+usrnm.value+"` added to db");
+                alert("Alert: User `"+xss(usrnm.value)+"` added to db");
             }
             else
             {
-                alert("Alert: User `"+usrnm.value+"` already present in db");
+                alert("Alert: User `"+xss(usrnm.value)+"` already present in db");
             }
             document.getElementById("usrname").value="";
             document.getElementById("pwd").value="";
@@ -101,7 +102,7 @@ async function updateCredits(){
             var db1 = client.db("tempdemo");
             var credits_add = document.getElementById("credits_amount");
             console.log(credits_add.value)
-            if(credits_add.value != "") {
+            if(xss(credits_add.value) != "") {
                 const currentAmount = await get_cur_amount();
                 console.log(currentAmount)
                 const result = await db1.collection('credits').updateOne(

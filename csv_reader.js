@@ -6,7 +6,9 @@ const csvContent = document.getElementById('csv-content');
 const saveToUsbButton = document.getElementById('save-to-usb-button');
 
 let csvFilePath = '';
-
+function closeFn1() {
+  ipcRenderer.send('close')
+}
 openCsvButton.addEventListener('click', async () => {
   try {
     const result = await ipcRenderer.invoke('open-csv-dialog');

@@ -3,8 +3,8 @@ const { google } = require('googleapis');
 const { OAuth2Client } = require('google-auth-library');
 
 // Define your client ID and secret
-const CLIENT_ID = '3764791994-ihegnq8q8usst3qurno1ft73druvu6qq.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
+const CLIENT_ID = 'your client id';
+const CLIENT_SECRET = 'your client secret';
 
 // Define the scopes you want to request (in this case, we only need the user's email and name)
 const SCOPES = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'];
